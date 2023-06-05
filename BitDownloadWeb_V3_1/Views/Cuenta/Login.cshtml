@@ -1,0 +1,42 @@
+﻿
+@model Usuarios
+
+
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=devide-width" />
+    <title>Index</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+</head>
+<body>
+    <div class="row mt-5">
+        <div class="col-sm-4 offset-sm-4">
+
+            <form method="post" asp-action="Login" asp-controller="Cuenta">
+                <h1 class="h3 mb-3">Inicio de Sesion</h1>
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Email</label>
+                    <input type="email" class="form-control" placeholder="Ingrese Email" required asp-for="Email" />
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Contraseña</label>
+                    <input type="password" class="form-control" placeholder="Contraseña" required asp-for="Clave" />
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" asp-for="MantenerActivo" />
+                    <label class="form-check-label" for="exampleCheck1">Recordar Sesion</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Ingresar</button>
+                <label class="alert-danger">@ViewBag.Error</label>
+            </form>
+
+        </div>
+    </div>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

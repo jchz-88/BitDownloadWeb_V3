@@ -1,0 +1,243 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model Usuarios
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+} 
+
+<div class="row m-4">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                USUARIOS
+            </div>
+            <div class="card-body">
+                <table class="display responsive nowrap" id="table_u" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Telefono</th>
+                            <th>Correo</th>
+                            <th>Fecha de Registro</th>
+                            <th>Ultima Conexión</th>
+                            <th>Activo</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="FormModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="titmodal">Usuario:</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form asp-action="GuardarUsuario" asp-controller="Usuarios" method="post">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+
+
+                            <input type="hidden" id="txtIdUsuario" />
+                            <div class="form-group">
+                                <label for="txtNombre">Nombre:</label>
+                                <input asp-for="Nombre" type="text" class="form-control" id="txtNombre">
+                            </div>
+                            <div class="form-group">
+                                <label for="txtApellidos">Apellido:</label>
+                                <input asp-for="Apellido" type="text" class="form-control" id="txtApellidos">
+                            </div>
+                            <div class="form-group">
+                                <label for="txtTelefono">Telefono:</label>
+                                <input asp-for="Telefono" type="text" class="form-control" id="txtTelefono">
+                            </div>
+                            <div class="form-group">
+                                <label for="txtEmail">Email:</label>
+                                <input asp-for="Email" type="text" class="form-control" id="txtEmail">
+                            </div>
+                            <div class="form-group">
+                                <label for="txtActivo">Activo:</label>
+                                <input asp-for="Activo" type="text" class="form-control" id="txtActivo">
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+                    <button class="btn btn-primary" type="submit">Guardar</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+    <script>
+        var tabla_usuario;
+        $(document).ready(function () {
+            tabla_usuario = $('#table_u').DataTable({
+                "ajax": {
+                    "url": "@Url.Action("ListarUsuarios", "Usuarios")",
+                    "type": "GET",
+                    "datatype": "json"
+                },
+                "columns": [
+                    { "data": "nombre" },
+                    { "data": "apellido" },
+                    { "data": "telefono" },
+                    { "data": "email" },
+                    { "data": "fechaRegistro" },
+                    { "data": "ultimaConexion" },
+                    { "data": "activo" },
+                    {
+                        "data": "id", "render": function (data) {
+                            return "<button class='btn btn-primary btn-sm' type='button' onclick='abrirModal(" + data + ")'><i class='fas fa-pen'></i></button>" +
+                                "<button class='btn btn-danger btn-sm ml-2' type='button' onclick='Eliminar(" + data + ")'><i class='fa fa-trash'></i></button>"
+                        },
+                        "orderable": false,
+                        "searchable": false,
+                        "width": "150px"
+                    }
+                ],
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        text: 'Alta de Usuario',
+                        attr: { class: 'btn btn-success btn-sm' },
+                        action: function (e, dt, node, config) {
+                            abrirModal(0)
+                        }
+                    }
+                ],
+                "language": {
+                    "url": "@Url.Content("~/datatable.es-ES.json")"
+                }
+
+            });
+        });
+
+
+        function abrirModal($Id) {
+
+            $("#txtIdUsuario").val($Id);
+            if ($Id != 0) {
+
+                jQuery.ajax({
+                    url: "@Url.Action("ObtenerUsuario","Usuarios")" + "?Id=" + $Id,
+                    type: "GET",
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+
+                        if (data != null) {
+
+                            $("#txtNombre").val(data.nombre);
+                            $("#txtApellidos").val(data.apellido);
+                            $("#txtTelefono").val(data.telefono);
+                            $("#txtEmail").val(data.email);
+                            $("#txtActivo").val(data.activo);
+                        }
+
+                    }
+                });
+            } else {
+                $("#txtNombre").val("");
+                $("#txtApellidos").val("");
+                $("#txtTelefono").val("");
+                $("#txtEmail").val("");
+                $("#txtActivo").val("");
+            }
+
+            $('#FormModal').modal('show');
+
+        }
+
+        
+        /*
+        $(document).ready(function () {
+            $('#myForm').submit(function (e) {
+                e.preventDefault();
+
+                var oUser = {
+                    Id: parseInt($("#txtIdUsuario").val()),
+                    Nombre: $("#txtNombre").val(),
+                    Apellido: $("#txtApellidos").val(),
+                    Telefono: $("#txtTelefono").val(),
+                    Email: $("#txtEmail").val(),
+                    Activo: parseInt($("#txtActivo").val()),
+                }
+           
+            
+                $.ajax({
+                    url: "/Usuarios/GuardarUsuario",
+                    type: "POST",
+                    data: JSON.stringify(oUser),
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+
+                        if (response) {
+                            tabla_usuario.ajax.reload();
+                            $('#FormModal').modal('hide');
+                        } else {
+                            alert("No se pudo guardar los cambios");
+                        }
+                    },
+                    error: function(error){
+                        console.log(oUser)
+                    }
+
+                });
+            });
+
+        });
+
+
+         */
+
+
+            function Eliminar($Id) {
+            if (confirm("¿Realmente desea eliminar?")) {
+
+                jQuery.ajax({
+                    url: "@Url.Action("EliminarUsuario", "Usuarios")" + "?Id=" + $Id,
+                    type: "GET",
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data) {
+
+                        if (data.resultado) {
+                            tabla_usuario.ajax.reload();
+                        }
+                    }
+                });
+
+
+            }
+        }
+
+    </script>
+
+
+
+}

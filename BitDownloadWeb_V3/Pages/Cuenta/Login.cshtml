@@ -1,0 +1,23 @@
+﻿@page
+@model BitDownloadWeb_V3.Model.Usuarios
+@{
+}
+
+<form method="post" asp-action="Login" asp-controller="Cuenta">
+    <h1 class="h3 mb-3">Inicio de Sesion</h1>
+    <div class="form-floating">
+        <input type="text" class="form-control" required asp-for="Email"/>
+        <label for="floatingInput">Email</label>
+    </div>
+    <div class="form-floating">
+        <input type="password" class="form-control" required asp-for="Clave"/>
+        <label for="floatingPassword">Password</label>
+    </div>
+    <div class=" checkbox mb-3">
+        <label>
+            <input type="checkbox" asp-for="MantenerActivo" /> Recordar sesion
+        </label>
+    </div>
+    <button type="submit" class="btn-lg btn-primary">Ingresar</button>
+    <label class="alert-danger">@ViewBag.Error</label>
+</form>
